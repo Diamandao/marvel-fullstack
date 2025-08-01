@@ -1,0 +1,14 @@
+import { Link } from "react-router-dom";
+
+const Header = () => {
+  return (
+    <header style={{ padding: "1rem", backgroundColor: "#202020", color: "#fff" }}>
+      <nav style={{ display: "flex", gap: "2rem" }}>
+        <Link to="/" style={{ color: "#fff", textDecoration: "none" }}>🏠 Personnages</Link>
+        <Link to="/favorites" style={{ color: "#fff", textDecoration: "none" }}>⭐ Favoris</Link>
+      </nav>
+    </header>
+  );
+};
+
+export default Header;
