@@ -8,27 +8,20 @@ const CharacterDetails = () => {
   const [comics, setComics] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
+  // URL du backend (depuis .env)
+  const API_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     const fetchCharacterAndComics = async () => {
       try {
-        setIsLoading(true);
-
-        // 1. Récupération des détails du personnage
-        const charResponse = await axios.get(
-          `${API_BASE_URL}/characters/${id}`
-        );
+        // ⚠️ Appels  backend déployé sur Netlify
+        const charResponse = await axios.get(`${API_URL}/character/${id}`);
         setCharacter(charResponse.data);
 
-        // 2. Récupération des comics associés
-        const comicsResponse = await axios.get(`${API_BASE_URL}/comics`, {
-          params: {
-            characterId: id,
-          },
+        const comicsResponse = await axios.get(`${API_URL}/comics`, {
+          params: { characterId: id },
         });
-
-        setComics(comicsResponse.data.results || []);
+        setComics(comicsResponse.data.results);
       } catch (error) {
         console.error("Erreur lors du chargement des détails :", error.message);
       } finally {
@@ -37,7 +30,7 @@ const CharacterDetails = () => {
     };
 
     fetchCharacterAndComics();
-  }, [id]);
+  }, [id, API_URL]);
 
   if (isLoading) {
     return <p style={{ color: "#fff", padding: "2rem" }}>Chargement...</p>;
@@ -60,12 +53,16 @@ const CharacterDetails = () => {
         src={thumbnailUrl}
         alt={character.name}
         style={{ width: "250px", borderRadius: "8px" }}
+        onError={(e) =>
+          (e.target.src =
+            "https://via.placeholder.com/250x250.png?text=Image+Not+Found")
+        }
       />
       <p style={{ maxWidth: "600px", marginTop: "1rem" }}>
         {character.description || "Aucune description disponible."}
       </p>
 
-      <h3 className="black-title">Comics associés :</h3>
+      <h3 style={{ marginTop: "2rem", color: "black" }}>Comics associés :</h3>
       {comics.length === 0 ? (
         <p>Aucun comic trouvé pour ce personnage.</p>
       ) : (
@@ -84,19 +81,24 @@ const CharacterDetails = () => {
 
             return (
               <div
-                key={comic._id || comic.id}
+                key={comic._id}
                 style={{
                   backgroundColor: "#1e1e1e",
                   padding: "1rem",
                   borderRadius: "8px",
+                  color: "#fff",
                 }}
               >
                 <img
                   src={comicThumb}
                   alt={comic.title}
                   style={{ width: "100%", borderRadius: "4px" }}
+                  onError={(e) =>
+                    (e.target.src =
+                      "https://via.placeholder.com/200x300.png?text=Image+Not+Found")
+                  }
                 />
-                <h4>{comic.title}</h4>
+                <h4 style={{ marginTop: "0.5rem" }}>{comic.title}</h4>
                 <p style={{ fontSize: "0.85rem", color: "#ccc" }}>
                   {comic.description || "Pas de description."}
                 </p>
