@@ -10,11 +10,8 @@ const ComicDetails = () => {
   useEffect(() => {
     const fetchComic = async () => {
       try {
-        const apiUrl = encodeURIComponent(
-          `https://lereacteur-marvel-api.netlify.app/comic/${id}?apiKey=wE5GChp4Dvg0xZyf`
-        );
-        const proxyUrl = `https://api.allorigins.win/raw?url=${apiUrl}`;
-        const response = await axios.get(proxyUrl);
+        const apiUrl = import.meta.env.VITE_API_URL;
+        const response = await axios.get(`${apiUrl}/comic/${id}`);
         setComic(response.data);
       } catch (error) {
         console.error("Erreur lors du chargement du comic :", error.message);

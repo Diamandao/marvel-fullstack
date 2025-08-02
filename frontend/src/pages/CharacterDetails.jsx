@@ -8,7 +8,6 @@ const CharacterDetails = () => {
   const [comics, setComics] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // 🔹 Ton backend déployé ou localhost (si tu tests localement)
   const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
 
   useEffect(() => {
@@ -66,7 +65,7 @@ const CharacterDetails = () => {
         {character.description || "Aucune description disponible."}
       </p>
 
-      <h3 style={{ marginTop: "2rem" }}>📚 Comics associés :</h3>
+      <h3 className="black-title">Comics associés :</h3>
       {comics.length === 0 ? (
         <p>Aucun comic trouvé pour ce personnage.</p>
       ) : (

@@ -159,4 +159,9 @@ input::placeholder {
       object-fit: cover;
     }
   }
+
+  .black-title {
+    color: black;
+    margin-top: 2rem;
+  }
 }
