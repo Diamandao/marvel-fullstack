@@ -32,8 +32,7 @@ const Comics = () => {
   }, [search, page]);
 
   useEffect(() => {
-    // Chargement des favoris depuis localStorage
-    const stored = localStorage.getItem("marvelFavorites");
+    const stored = localStorage.getItem("marvelFavoritesComics");
     const parsed = stored ? JSON.parse(stored) : [];
     setFavorites(parsed);
   }, []);
@@ -50,8 +49,11 @@ const Comics = () => {
       toast.success(`${item.title} ajouté aux favoris`);
     }
 
-    localStorage.setItem("marvelFavorites", JSON.stringify(updatedFavorites));
-    setFavorites(updatedFavorites); // <== MISE À JOUR DU STATE
+    localStorage.setItem(
+      "marvelFavoritesComics",
+      JSON.stringify(updatedFavorites)
+    );
+    setFavorites(updatedFavorites);
   };
 
   const isInFavorites = (itemId) => {
@@ -79,7 +81,7 @@ const Comics = () => {
           {comics.map((comic) => (
             <div key={comic._id} className="card">
               <img
-                src={comic.thumbnail?.path + "." + comic.thumbnail?.extension}
+                src={`${comic.thumbnail?.path}.${comic.thumbnail?.extension}`}
                 alt={comic.title}
                 onError={(e) =>
                   (e.target.src =

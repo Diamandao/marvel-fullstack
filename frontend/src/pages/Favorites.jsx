@@ -1,68 +1,106 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 import "../components/cards.css";
 
 const Favorites = () => {
-  const [favorites, setFavorites] = useState([]);
+  const [characterFavorites, setCharacterFavorites] = useState([]);
+  const [comicFavorites, setComicFavorites] = useState([]);
 
+  // Charger les favoris au montage
   useEffect(() => {
-    loadFavorites();
+    try {
+      const storedCharacters =
+        JSON.parse(localStorage.getItem("marvelFavoritesCharacters")) || [];
+      const storedComics =
+        JSON.parse(localStorage.getItem("marvelFavoritesComics")) || [];
+      setCharacterFavorites(storedCharacters);
+      setComicFavorites(storedComics);
+    } catch (e) {
+      console.error("Erreur lors du chargement des favoris :", e);
+      toast.error("Erreur de chargement des favoris");
+    }
   }, []);
 
-  const loadFavorites = () => {
-    const stored = localStorage.getItem("marvelFavorites");
-    const parsed = stored ? JSON.parse(stored) : [];
-    setFavorites(parsed);
+  // Supprimer un personnage
+  const removeCharacter = (id) => {
+    const updated = characterFavorites.filter((item) => item._id !== id);
+    setCharacterFavorites(updated);
+    localStorage.setItem("marvelFavoritesCharacters", JSON.stringify(updated));
+    toast.info("Personnage retiré des favoris");
   };
 
-  const removeFavorite = (itemId) => {
-    const updatedFavorites = favorites.filter((item) => item._id !== itemId);
-    localStorage.setItem("marvelFavorites", JSON.stringify(updatedFavorites));
-    setFavorites(updatedFavorites);
-  };
-
-  const characters = favorites.filter((item) => item.title === undefined);
-  const comics = favorites.filter((item) => item.title !== undefined);
-
-  const renderItems = (items) => {
-    return items.map((item) => (
-      <div key={item._id} className="card">
-        <img
-          src={item.thumbnail?.path + "." + item.thumbnail?.extension}
-          alt={item.name || item.title}
-          onError={(e) =>
-            (e.target.src =
-              "https://via.placeholder.com/200x200.png?text=Image+Not+Found")
-          }
-        />
-        <h3>{item.name || item.title}</h3>
-        <p>{item.description || "Aucune description."}</p>
-        <button onClick={() => removeFavorite(item._id)}>⭐ Retirer</button>
-      </div>
-    ));
+  // Supprimer un comic
+  const removeComic = (id) => {
+    const updated = comicFavorites.filter((item) => item._id !== id);
+    setComicFavorites(updated);
+    localStorage.setItem("marvelFavoritesComics", JSON.stringify(updated));
+    toast.info("Comic retiré des favoris");
   };
 
   return (
     <div style={{ padding: "2rem" }}>
-      <h2>Vos favoris</h2>
+      <h1 style={{ color: "#E62429" }}>Vos Favoris Marvel</h1>
 
-      {favorites.length === 0 ? (
-        <p>Vous n’avez encore ajouté aucun favori.</p>
+      {/* Personnages favoris */}
+      <h2>Personnages favoris</h2>
+      {characterFavorites.length === 0 ? (
+        <p>Aucun personnage favori.</p>
       ) : (
-        <>
-          {characters.length > 0 && (
-            <>
-              <h3>Vos Personnages</h3>
-              <div className="grid-container">{renderItems(characters)}</div>
-            </>
-          )}
+        <div className="grid-container">
+          {characterFavorites.map((char) => (
+            <div key={char._id} className="card">
+              <Link
+                to={`/character/${char._id}`}
+                style={{ textDecoration: "none", color: "inherit" }}
+              >
+                <img
+                  src={`${char.thumbnail?.path}.${char.thumbnail?.extension}`}
+                  alt={char.name}
+                  onError={(e) =>
+                    (e.currentTarget.src =
+                      "https://via.placeholder.com/200x200.png?text=Image+Non+dispo")
+                  }
+                />
+                <h3>{char.name}</h3>
+                <p>{char.description || "Aucune description."}</p>
+              </Link>
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  removeCharacter(char._id);
+                }}
+              >
+                ❌ Retirer
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
 
-          {comics.length > 0 && (
-            <>
-              <h3>Comics</h3>
-              <div className="grid-container">{renderItems(comics)}</div>
-            </>
-          )}
-        </>
+      {/* Comics favoris */}
+      <h2 style={{ marginTop: "3rem" }}>Comics favoris</h2>
+      {comicFavorites.length === 0 ? (
+        <p>Aucun comic favori.</p>
+      ) : (
+        <div className="grid-container">
+          {comicFavorites.map((comic) => (
+            <div key={comic._id} className="card">
+              <img
+                src={`${comic.thumbnail?.path}.${comic.thumbnail?.extension}`}
+                alt={comic.title}
+                onError={(e) =>
+                  (e.currentTarget.src =
+                    "https://via.placeholder.com/200x200.png?text=Image+Non+dispo")
+                }
+              />
+              <h3>{comic.title}</h3>
+              <p>{comic.description || "Aucune description."}</p>
+              <button onClick={() => removeComic(comic._id)}>❌ Retirer</button>
+            </div>
+          ))}
+        </div>
       )}
     </div>
   );

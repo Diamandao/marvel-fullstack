@@ -7,17 +7,31 @@ import "../components/cards.css";
 const Characters = () => {
   const [characters, setCharacters] = useState([]);
   const [search, setSearch] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
   const [page, setPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(true);
   const [favorites, setFavorites] = useState([]);
   const limit = 30;
 
+  // Charger les favoris depuis le localStorage une seule fois
   useEffect(() => {
-    const stored = localStorage.getItem("marvelFavorites");
-    setFavorites(stored ? JSON.parse(stored) : []);
+    const storedFavorites = localStorage.getItem("marvelFavoritesCharacters");
+    if (storedFavorites) {
+      try {
+        setFavorites(JSON.parse(storedFavorites));
+      } catch (err) {
+        console.error("❌ JSON parse error:", err);
+        localStorage.removeItem("marvelFavoritesCharacters");
+      }
+    }
   }, []);
 
+  // Ajouter ou retirer un favori
   const handleFavorite = (item) => {
+    if (!item || !item._id) {
+      toast.error("Impossible d’ajouter ce personnage !");
+      return;
+    }
+
     const exists = favorites.some((fav) => fav._id === item._id);
     let updatedFavorites;
 
@@ -30,23 +44,32 @@ const Characters = () => {
     }
 
     setFavorites(updatedFavorites);
-    localStorage.setItem("marvelFavorites", JSON.stringify(updatedFavorites));
+    localStorage.setItem(
+      "marvelFavoritesCharacters",
+      JSON.stringify(updatedFavorites)
+    );
   };
 
   useEffect(() => {
     const fetchCharacters = async () => {
       setIsLoading(true);
       try {
-        const response = await axios.get("http://localhost:3001/characters", {
+        const res = await axios.get("http://localhost:3001/characters", {
           params: {
             name: search,
-            page: page,
-            limit: limit,
+            page,
+            limit,
           },
         });
-        setCharacters(response.data.results);
-      } catch (error) {
-        console.error("Erreur de chargement :", error.message);
+
+        if (Array.isArray(res.data.results)) {
+          setCharacters(res.data.results);
+        } else {
+          console.warn("⚠️ Données inattendues:", res.data);
+          setCharacters([]);
+        }
+      } catch (err) {
+        console.error("❌ Erreur API :", err.message);
         toast.error("Erreur lors du chargement des personnages");
       } finally {
         setIsLoading(false);
@@ -57,8 +80,8 @@ const Characters = () => {
   }, [search, page]);
 
   return (
-    <div>
-      <h2>Liste des personnages Marvel</h2>
+    <div style={{ padding: "2rem" }}>
+      <h1 style={{ color: "#E62429" }}>Vos Personnages Marvel</h1>
 
       <input
         type="text"
@@ -68,10 +91,21 @@ const Characters = () => {
           setSearch(e.target.value);
           setPage(1);
         }}
+        style={{
+          padding: "0.5rem",
+          fontSize: "1rem",
+          marginBottom: "2rem",
+          width: "100%",
+          maxWidth: "400px",
+        }}
       />
 
       {isLoading ? (
-        <p style={{ textAlign: "center" }}>Chargement...</p>
+        <p style={{ textAlign: "center", color: "#222" }}>Chargement...</p>
+      ) : characters.length === 0 ? (
+        <p style={{ textAlign: "center", color: "#222" }}>
+          Aucun personnage trouvé.
+        </p>
       ) : (
         <div className="grid-container">
           {characters.map((character) => {
@@ -86,15 +120,11 @@ const Characters = () => {
                   style={{ textDecoration: "none", color: "inherit" }}
                 >
                   <img
-                    src={
-                      character.thumbnail?.path +
-                      "." +
-                      character.thumbnail?.extension
-                    }
+                    src={`${character.thumbnail?.path}.${character.thumbnail?.extension}`}
                     alt={character.name}
                     onError={(e) =>
-                      (e.target.src =
-                        "https://via.placeholder.com/200x200.png?text=Image+Not+Found")
+                      (e.currentTarget.src =
+                        "https://via.placeholder.com/200x200.png?text=Image+Non+dispo")
                     }
                   />
                   <h3>{character.name}</h3>
