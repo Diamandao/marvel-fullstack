@@ -1,0 +1,162 @@
+body {
+  margin: 0;
+  font-family: "Bebas Neue", sans-serif;
+  background: radial-gradient(ellipse at center, #0a0a0a 0%, #000000 100%);
+  background-image: url("https://images.unsplash.com/photo-1504639725590-34d0984388bd?auto=format&fit=crop&w=1950&q=80");
+  background-size: cover;
+  background-attachment: fixed;
+  color: #fff;
+}
+
+h2 {
+  font-size: 2.5rem;
+  color: #e62429;
+  text-align: center;
+  margin-bottom: 2rem;
+  text-shadow: 2px 2px 8px #000;
+}
+
+input[type="text"] {
+  display: block;
+  margin: 0 auto 2rem auto;
+  padding: 0.8rem 1rem;
+  border-radius: 5px;
+  border: none;
+  width: 100%;
+  max-width: 400px;
+  font-size: 1.1rem;
+  background-color: #222;
+  color: #fff;
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.2);
+  outline: none;
+}
+
+input::placeholder {
+  color: #aaa;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 2rem;
+  padding: 1rem;
+}
+
+.card {
+  background-color: rgba(30, 30, 30, 0.9);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 0 15px rgba(255, 0, 0, 0.3);
+  transition: transform 0.3s, box-shadow 0.3s;
+  cursor: pointer;
+  backdrop-filter: blur(5px);
+}
+
+.card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 25px rgba(255, 0, 0, 0.5);
+}
+
+.card img {
+  width: 100%;
+  border-bottom: 1px solid #e62429;
+}
+
+.card h3 {
+  margin: 0.5rem;
+  font-size: 1.2rem;
+  color: #fff;
+}
+
+.card p {
+  padding: 0 0.8rem;
+  font-size: 0.9rem;
+  color: #ccc;
+  min-height: 60px;
+}
+
+.card button {
+  margin: 1rem auto;
+  display: block;
+  background-color: #e62429;
+  border: none;
+  color: #fff;
+  font-size: 0.95rem;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  transition: background 0.3s;
+  cursor: pointer;
+}
+
+.card button:hover {
+  background-color: #b71c1c;
+}
+
+/* Pagination */
+.pagination {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+
+.pagination button {
+  background-color: #444;
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.pagination button:disabled {
+  background-color: #777;
+  cursor: not-allowed;
+}
+
+/* Responsive fix */
+@media (max-width: 600px) {
+  h2 {
+    font-size: 2rem;
+  }
+
+  .card p {
+    font-size: 0.8rem;
+  }
+
+  .card button {
+    font-size: 0.85rem;
+  }
+
+  @media (max-width: 768px) {
+    .grid-container {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .card h3 {
+      font-size: 1rem;
+    }
+
+    .pagination {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .grid-container {
+      grid-template-columns: 1fr;
+    }
+
+    .card {
+      margin: 0 auto;
+    }
+
+    .card img {
+      max-height: 300px;
+      object-fit: cover;
+    }
+  }
+}
