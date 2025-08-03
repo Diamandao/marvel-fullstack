@@ -54,13 +54,16 @@ const Characters = () => {
     const fetchCharacters = async () => {
       setIsLoading(true);
       try {
-        const res = await axios.get("http://localhost:3001/characters", {
-          params: {
-            name: search,
-            page,
-            limit,
-          },
-        });
+        const res = await axios.get(
+          `${import.meta.env.VITE_API_URL}/characters`,
+          {
+            params: {
+              name: search,
+              page,
+              limit,
+            },
+          }
+        );
 
         if (Array.isArray(res.data.results)) {
           setCharacters(res.data.results);
