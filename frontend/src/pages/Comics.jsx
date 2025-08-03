@@ -23,9 +23,16 @@ const Comics = () => {
             },
           }
         );
-        setComics(response.data.results);
+
+        if (Array.isArray(response.data.results)) {
+          setComics(response.data.results);
+        } else {
+          console.warn("⚠️ Données inattendues :", response.data);
+          setComics([]);
+        }
       } catch (error) {
-        console.error(error.message);
+        console.error("❌ Erreur API :", error.message);
+        toast.error("Erreur lors du chargement des comics");
       } finally {
         setIsLoading(false);
       }
