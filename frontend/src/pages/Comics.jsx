@@ -14,12 +14,15 @@ const Comics = () => {
     const fetchComics = async () => {
       setIsLoading(true);
       try {
-        const response = await axios.get("http://localhost:3001/comics", {
-          params: {
-            title: search,
-            page: page,
-          },
-        });
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_URL}/comics`,
+          {
+            params: {
+              title: search,
+              page: page,
+            },
+          }
+        );
         setComics(response.data.results);
       } catch (error) {
         console.error(error.message);
