@@ -14,8 +14,10 @@ const CharacterDetails = () => {
   useEffect(() => {
     const fetchCharacterAndComics = async () => {
       try {
-        // ⚠️ Appels  backend déployé sur Netlify
-        const charResponse = await axios.get(`${API_URL}/character/${id}`);
+        //  Appels  backend déployé sur Netlify
+        const charResponse = await axios.get(
+          `${import.meta.env.VITE_API_URL}/character/${id}`
+        );
         setCharacter(charResponse.data);
 
         const comicsResponse = await axios.get(`${API_URL}/comics`, {

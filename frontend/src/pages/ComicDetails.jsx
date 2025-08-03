@@ -11,7 +11,9 @@ const ComicDetails = () => {
     const fetchComic = async () => {
       try {
         const apiUrl = import.meta.env.VITE_API_URL;
-        const response = await axios.get(`${apiUrl}/comic/${id}`);
+        const comicsRes = await axios.get(
+          `${import.meta.env.VITE_API_URL}/comics?characterId=${id}`
+        );
         setComic(response.data);
       } catch (error) {
         console.error("Erreur lors du chargement du comic :", error.message);
